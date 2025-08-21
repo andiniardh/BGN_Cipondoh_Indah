@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistem Foodtry - Badan Gizi Nasional</title>
+  <title>Sistem Foodtry - SPPG Cipondoh Indah</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     body {
@@ -88,13 +88,20 @@
       border-radius: 8px;
       cursor: pointer;
     }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #002B5B;
+      color: white;
+      margin-top: 30px;
+    }
   </style>
 </head>
 <body>
   <header>
-    <img src="logoBGN.png" alt="Logo BGN" class="logo">
+    <img src="logoBGN.png" alt="Logo SPPG" class="logo">
     <h1>Sistem Monitoring Foodtry</h1>
-    <p>Badan Gizi Nasional Republik Indonesia</p>
+    <p>Satuan Pelayanan Pemenuhan Gizi (SPPG) Cipondoh Indah</p>
   </header>
 
   <div class="container">
@@ -123,6 +130,10 @@
     <button class="download-btn" onclick="downloadExcel()">Download Excel</button>
     <button class="download-btn" onclick="downloadCSV()">Download CSV</button>
   </div>
+
+  <footer>
+    © 2025 SPPG Cipondoh Indah by andiniardh
+  </footer>
 
   <script>
     const form = document.getElementById('foodtryForm');
