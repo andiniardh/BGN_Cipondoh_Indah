@@ -97,7 +97,7 @@
       color: white;
     }
     .edit-btn { background: #ffc107; }
-    .delete-btn { background: #dc3545; }
+    .save-btn { background: #17a2b8; }
     footer {
       text-align: center;
       padding: 15px;
@@ -150,6 +150,7 @@
     const form = document.getElementById('foodtryForm');
     const tableBody = document.querySelector('#dataTable tbody');
     let data = [];
+    let editingIndex = null;
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
@@ -159,7 +160,7 @@
       const diterima = parseInt(document.getElementById('diterima').value);
       const selisih = dikirim - diterima;
 
-      const row = { tanggal, sekolah, dikirim, diterima, selisih };
+      const row = { tanggal, sekolah, dikirim, diterima, selisih, saved: false };
       data.push(row);
       renderTable();
       form.reset();
@@ -176,8 +177,8 @@
           <td>${row.diterima}</td>
           <td>${row.selisih}</td>
           <td>
-            <button class="action-btn edit-btn" onclick="editRow(${index})">Edit</button>
-            <button class="action-btn delete-btn" onclick="deleteRow(${index})">Hapus</button>
+            ${row.saved ? '' : `<button class="action-btn edit-btn" onclick="editRow(${index})">Edit</button>
+            <button class="action-btn save-btn" onclick="saveRow(${index})">Save</button>`}
           </td>
         `;
         tableBody.appendChild(tr);
@@ -186,6 +187,7 @@
 
     function editRow(index) {
       const row = data[index];
+      if (row.saved) return;
       document.getElementById('tanggal').value = row.tanggal;
       document.getElementById('sekolah').value = row.sekolah;
       document.getElementById('dikirim').value = row.dikirim;
@@ -194,13 +196,19 @@
       renderTable();
     }
 
-    function deleteRow(index) {
-      data.splice(index, 1);
+    function saveRow(index) {
+      data[index].saved = true;
       renderTable();
     }
 
     function downloadExcel() {
-      const ws = XLSX.utils.json_to_sheet(data);
+      const ws = XLSX.utils.json_to_sheet(data.map(row => ({
+        Tanggal: row.tanggal,
+        Sekolah: row.sekolah,
+        Dikirim: row.dikirim,
+        Diterima: row.diterima,
+        Selisih: row.selisih
+      })));
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Foodtry");
       XLSX.writeFile(wb, "data_foodtry.xlsx");
@@ -220,4 +228,3 @@
   </script>
 </body>
 </html>
-
