@@ -88,6 +88,16 @@
       border-radius: 8px;
       cursor: pointer;
     }
+    .action-btn {
+      padding: 5px 8px;
+      margin: 2px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: white;
+    }
+    .edit-btn { background: #ffc107; }
+    .delete-btn { background: #dc3545; }
     footer {
       text-align: center;
       padding: 15px;
@@ -122,6 +132,7 @@
           <th>Paket Dikirim</th>
           <th>Paket Diterima</th>
           <th>Selisih</th>
+          <th>Aksi</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -150,19 +161,43 @@
 
       const row = { tanggal, sekolah, dikirim, diterima, selisih };
       data.push(row);
-
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${tanggal}</td>
-        <td>${sekolah}</td>
-        <td>${dikirim}</td>
-        <td>${diterima}</td>
-        <td>${selisih}</td>
-      `;
-      tableBody.appendChild(tr);
-
+      renderTable();
       form.reset();
     });
+
+    function renderTable() {
+      tableBody.innerHTML = '';
+      data.forEach((row, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.tanggal}</td>
+          <td>${row.sekolah}</td>
+          <td>${row.dikirim}</td>
+          <td>${row.diterima}</td>
+          <td>${row.selisih}</td>
+          <td>
+            <button class="action-btn edit-btn" onclick="editRow(${index})">Edit</button>
+            <button class="action-btn delete-btn" onclick="deleteRow(${index})">Hapus</button>
+          </td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function editRow(index) {
+      const row = data[index];
+      document.getElementById('tanggal').value = row.tanggal;
+      document.getElementById('sekolah').value = row.sekolah;
+      document.getElementById('dikirim').value = row.dikirim;
+      document.getElementById('diterima').value = row.diterima;
+      data.splice(index, 1);
+      renderTable();
+    }
+
+    function deleteRow(index) {
+      data.splice(index, 1);
+      renderTable();
+    }
 
     function downloadExcel() {
       const ws = XLSX.utils.json_to_sheet(data);
@@ -185,3 +220,4 @@
   </script>
 </body>
 </html>
+
