@@ -98,6 +98,7 @@
     }
     .edit-btn { background: #ffc107; }
     .save-btn { background: #17a2b8; }
+    .delete-btn { background: #dc3545; }
     footer {
       text-align: center;
       padding: 15px;
@@ -149,8 +150,7 @@
   <script>
     const form = document.getElementById('foodtryForm');
     const tableBody = document.querySelector('#dataTable tbody');
-    let data = [];
-    let editingIndex = null;
+    let data = JSON.parse(localStorage.getItem('foodtryData')) || [];
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
@@ -162,6 +162,7 @@
 
       const row = { tanggal, sekolah, dikirim, diterima, selisih, saved: false };
       data.push(row);
+      saveData();
       renderTable();
       form.reset();
     });
@@ -179,6 +180,7 @@
           <td>
             ${row.saved ? '' : `<button class="action-btn edit-btn" onclick="editRow(${index})">Edit</button>
             <button class="action-btn save-btn" onclick="saveRow(${index})">Save</button>`}
+            <button class="action-btn delete-btn" onclick="deleteRow(${index})">Hapus</button>
           </td>
         `;
         tableBody.appendChild(tr);
@@ -193,12 +195,26 @@
       document.getElementById('dikirim').value = row.dikirim;
       document.getElementById('diterima').value = row.diterima;
       data.splice(index, 1);
+      saveData();
       renderTable();
     }
 
     function saveRow(index) {
       data[index].saved = true;
+      saveData();
       renderTable();
+    }
+
+    function deleteRow(index) {
+      if (confirm("Yakin ingin menghapus data ini?")) {
+        data.splice(index, 1);
+        saveData();
+        renderTable();
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem('foodtryData', JSON.stringify(data));
     }
 
     function downloadExcel() {
@@ -225,6 +241,10 @@
       link.download = 'data_foodtry.csv';
       link.click();
     }
+
+    // tampilkan data saat pertama kali load
+    renderTable();
   </script>
 </body>
 </html>
+
