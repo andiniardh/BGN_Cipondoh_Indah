@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Foodtry - Badan Gizi Nasional</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(#002B5B, #F5E6CA);
+      margin: 0;
+      padding: 0;
+      color: #333;
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('batikBGN.png');
+      background-repeat: repeat;
+      background-size: 250px;
+      opacity: 0.08;
+      z-index: -1;
+    }
+    header {
+      background: #002B5B;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      position: relative;
+    }
+    header img.logo {
+      height: 70px;
+      position: absolute;
+      left: 20px;
+      top: 10px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: rgba(255,255,255,0.95);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    h2 {
+      text-align: center;
+      color: #002B5B;
+    }
+    form input, form button {
+      padding: 8px;
+      margin: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    form button {
+      background: #002B5B;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+    }
+    table, th, td {
+      border: 1px solid #999;
+      text-align: center;
+      padding: 8px;
+    }
+    th {
+      background: #F5E6CA;
+    }
+    .download-btn {
+      margin-top: 15px;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logoBGN.png" alt="Logo BGN" class="logo">
+    <h1>Sistem Monitoring Foodtry</h1>
+    <p>Badan Gizi Nasional Republik Indonesia</p>
+  </header>
+
+  <div class="container">
+    <h2>Input Data Foodtry</h2>
+    <form id="foodtryForm">
+      <input type="date" id="tanggal" required>
+      <input type="text" id="sekolah" placeholder="Nama Sekolah" required>
+      <input type="number" id="dikirim" placeholder="Jumlah Paket Dikirim" required>
+      <input type="number" id="diterima" placeholder="Jumlah Paket Diterima" required>
+      <button type="submit">Tambah Data</button>
+    </form>
+
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Nama Sekolah</th>
+          <th>Paket Dikirim</th>
+          <th>Paket Diterima</th>
+          <th>Selisih</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button class="download-btn" onclick="downloadExcel()">Download Excel</button>
+    <button class="download-btn" onclick="downloadCSV()">Download CSV</button>
+  </div>
+
+  <script>
+    const form = document.getElementById('foodtryForm');
+    const tableBody = document.querySelector('#dataTable tbody');
+    let data = [];
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const tanggal = document.getElementById('tanggal').value;
+      const sekolah = document.getElementById('sekolah').value;
+      const dikirim = parseInt(document.getElementById('dikirim').value);
+      const diterima = parseInt(document.getElementById('diterima').value);
+      const selisih = dikirim - diterima;
+
+      const row = { tanggal, sekolah, dikirim, diterima, selisih };
+      data.push(row);
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${tanggal}</td>
+        <td>${sekolah}</td>
+        <td>${dikirim}</td>
+        <td>${diterima}</td>
+        <td>${selisih}</td>
+      `;
+      tableBody.appendChild(tr);
+
+      form.reset();
+    });
+
+    function downloadExcel() {
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Foodtry");
+      XLSX.writeFile(wb, "data_foodtry.xlsx");
+    }
+
+    function downloadCSV() {
+      let csv = "Tanggal,Nama Sekolah,Dikirim,Diterima,Selisih\n";
+      data.forEach(row => {
+        csv += `${row.tanggal},${row.sekolah},${row.dikirim},${row.diterima},${row.selisih}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'data_foodtry.csv';
+      link.click();
+    }
+  </script>
+</body>
+</html>
